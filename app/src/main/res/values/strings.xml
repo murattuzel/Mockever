@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Mockever</string>
+    <string name="empty_string"/>
+    <string name="no_internet_connection">Unable to connect to the internet.</string>
+    <string name="server_error_message">An error occurred. Please try again later.</string>
+    <string name="unknown_error_message">Something bad happened.</string>
+</resources>
