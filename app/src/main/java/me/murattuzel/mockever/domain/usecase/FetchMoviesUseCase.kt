@@ -11,11 +11,12 @@ class FetchMoviesUseCase @Inject constructor(
     private val dataSource: MovieRemoteDataSource
 ) {
 
-    suspend operator fun invoke(): Result<MoviesResponse> = withContext(Dispatchers.IO) {
-        try {
-            Result.success(dataSource.fetchMovies())
-        } catch (exception: IOException) {
-            Result.failure(exception)
+    suspend operator fun invoke(shouldReturnSuccess: Boolean): Result<MoviesResponse> =
+        withContext(Dispatchers.IO) {
+            try {
+                Result.success(dataSource.fetchMovies(shouldReturnSuccess))
+            } catch (exception: IOException) {
+                Result.failure(exception)
+            }
         }
-    }
 }

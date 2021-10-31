@@ -4,10 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import me.murattuzel.mockever.data.MoviesResponse
 import me.murattuzel.mockever.domain.usecase.FetchMoviesUseCase
 import me.murattuzel.mockever.ui.movies.mapper.MoviesViewStateMapper
@@ -18,16 +17,27 @@ class MoviesViewModel @Inject constructor(
     private val fetchMoviesUseCase: FetchMoviesUseCase,
     private val viewStateMapper: MoviesViewStateMapper
 ) : ViewModel() {
-    val state: StateFlow<MoviesViewState> = flow {
+    private val _state = MutableStateFlow(MoviesViewState.Initial)
+    val state: StateFlow<MoviesViewState> = _state
+
+    val onSuccessData: (() -> Unit) = { fetchData(shouldReturnSuccess = true) }
+    val onFailureData: (() -> Unit) = { fetchData(shouldReturnSuccess = false) }
+
+    init {
+        fetchData(shouldReturnSuccess = true)
+    }
+
+    private fun fetchData(shouldReturnSuccess: Boolean) = viewModelScope.launch {
+        _state.value = MoviesViewState.Initial
         delay(1_000)
-        fetchMoviesUseCase()
-            .onSuccess { response -> emit(emitSuccessState(response)) }
-            .onFailure { throwable -> emit(emitFailureState(throwable)) }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = MoviesViewState.Initial
-    )
+        fetchMoviesUseCase(shouldReturnSuccess)
+            .onSuccess { response ->
+                _state.value = emitSuccessState(response)
+            }
+            .onFailure { throwable ->
+                _state.value = emitFailureState(throwable)
+            }
+    }
 
     private fun emitSuccessState(response: MoviesResponse): MoviesViewState =
         viewStateMapper.successMapper.mapToViewState(response)

@@ -3,7 +3,6 @@ package me.murattuzel.mockever.util
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import me.murattuzel.mockever.data.MockRequestType
-import me.murattuzel.mockever.data.MovieService
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Protocol
@@ -18,24 +17,25 @@ class MockResponseInterceptor @Inject constructor(
 
     override fun intercept(chain: Interceptor.Chain): Response {
         return with(chain.request()) {
-            when (findMockTag()) {
-                MockRequestType.MOVIES -> createLocalResponse(
+            when (val mockRequestType = findMockTag()) {
+                is MockRequestType -> createLocalResponse(
                     request = this,
-                    filePath = MovieService.MOVIES
+                    requestType = mockRequestType
                 )
                 else -> chain.proceed(this)
             }
         }
     }
 
-    private fun createLocalResponse(request: Request, filePath: String): Response {
+    private fun createLocalResponse(request: Request, requestType: MockRequestType): Response {
         return Response.Builder()
-            .code(200)
+            .code(requestType.responseCodeStatus)
             .request(request)
             .protocol(Protocol.HTTP_2)
-            .message("OK")
+            .message(requestType.responseMessage)
             .body(
-                readFromJson(filePath).toResponseBody("application/json".toMediaType())
+                readFromJson(requestType.filePath)
+                    .toResponseBody("application/json".toMediaType())
             )
             .addHeader("content-type", "application/json")
             .build()

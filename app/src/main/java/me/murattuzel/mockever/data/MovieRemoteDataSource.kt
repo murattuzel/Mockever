@@ -7,7 +7,13 @@ class MovieRemoteDataSource @Inject constructor(
     private val service: MovieService
 ) {
 
-    suspend fun fetchMovies(): MoviesResponse = invoke { service.fetchMovies() }
+    suspend fun fetchMovies(shouldReturnSuccess: Boolean): MoviesResponse = invoke {
+        service.fetchMovies(
+            type = MockRequestType.Movies(
+                shouldReturnSuccess = shouldReturnSuccess
+            )
+        )
+    }
 
     suspend fun <O> invoke(serviceFunction: suspend () -> O): O {
         return try {
