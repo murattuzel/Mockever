@@ -87,6 +87,7 @@ dependencies {
     implementation(platform(Dependencies.OkHttp.bom))
     implementation(Dependencies.OkHttp.okHttp)
     implementation(Dependencies.OkHttp.loggingInterceptor)
+    testImplementation(Dependencies.OkHttp.mockWebServer)
 
     implementation(Dependencies.Util.timber)
     implementation(Dependencies.Util.coil)

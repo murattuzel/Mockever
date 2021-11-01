@@ -85,6 +85,7 @@ object Dependencies {
         const val bom = "com.squareup.okhttp3:okhttp-bom:4.9.2"
         const val okHttp = "com.squareup.okhttp3:okhttp"
         const val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor"
+        const val mockWebServer = "com.squareup.okhttp3:mockwebserver"
     }
 
     object Util {
