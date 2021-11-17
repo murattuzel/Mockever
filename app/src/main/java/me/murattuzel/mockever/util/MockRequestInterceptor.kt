@@ -11,7 +11,7 @@ import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
 import javax.inject.Inject
 
-class MockResponseInterceptor @Inject constructor(
+class MockRequestInterceptor @Inject constructor(
     @ApplicationContext private val context: Context
 ) : Interceptor {
 

@@ -10,7 +10,7 @@ import kotlinx.serialization.json.Json
 import me.murattuzel.mockever.BuildConfig
 import me.murattuzel.mockever.data.MovieService
 import me.murattuzel.mockever.util.ErrorHandlingInterceptor
-import me.murattuzel.mockever.util.MockResponseInterceptor
+import me.murattuzel.mockever.util.MockRequestInterceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -37,13 +37,13 @@ object NetworkModule {
     @Singleton
     fun provideOkHttpClient(
         httpLoggingInterceptor: HttpLoggingInterceptor,
-        mockResponseInterceptor: MockResponseInterceptor,
+        mockRequestInterceptor: MockRequestInterceptor,
         errorHandlingInterceptor: ErrorHandlingInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(httpLoggingInterceptor)
             .addInterceptor(errorHandlingInterceptor)
-            .addInterceptor(mockResponseInterceptor)
+            .addInterceptor(mockRequestInterceptor)
             .build()
     }
 
